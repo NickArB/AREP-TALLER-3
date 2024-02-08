@@ -1,5 +1,5 @@
 package edu.escuelaing.arep.app;
 
 interface Function {
-    public String handle();
+    public String handle(String requestQuery);
 }

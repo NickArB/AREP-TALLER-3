@@ -114,7 +114,7 @@ public class HTTPServer {
         if(serviceUri.equals(calledServiceUri)){
             serverResponseHeaders.setContentType("text");
             outPut.println(serverResponseHeaders.OKResponse());
-            outPut.println(service.handle());
+            outPut.println(service.handle(requeUri.getQuery()));
         }
     }
 
@@ -164,7 +164,7 @@ public class HTTPServer {
         String[] args = {};
         serviceUri = path;
         service = svc;
-        
+
         if (!running) {
             HTTPServer.getInstance();
             HTTPServer.runServer(args);
