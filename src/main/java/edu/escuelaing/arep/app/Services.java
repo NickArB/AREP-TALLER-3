@@ -7,48 +7,41 @@ import java.io.IOException;
 
 public class Services {
     public static void main(String[] args) throws IOException {
-        HTTPServer server = HTTPServer.getInstance();
         
         get("/get-test", (req,rep) -> {
-            String response = "";
             rep.setContentType("html");
-            response += rep.OKResponse();
-            response += "<!DOCTYPE html>\r\n" + //
-                                "<html>\r\n" + //
-                                "    <body>\r\n" + //
-                                "        <h1>The get method works!</h1>\r\n" + //
-                                "    </body>\r\n" + //
-                                "</html>";
-            System.out.println(response);
-            return response;
+            rep.setHeader(rep.OKResponse());
+            rep.setBody("<!DOCTYPE html>\r\n" + //
+                        "<html>\r\n" + //
+                        "    <body>\r\n" + //
+                        "        <h1>The get method works!</h1>\r\n" + //
+                        "    </body>\r\n" + //
+                        "</html>");
+            return rep.createAndGetResponse();
         });
 
-        get("/get-test1", (req,rep) -> {
-            String response = "";
+        get("/read-query", (req,rep) -> {
             rep.setContentType("html");
-            response += rep.OKResponse();
-            response += "<!DOCTYPE html>\r\n" + //
-                                "<html>\r\n" + //
-                                "    <body>\r\n" + //
-                                "        <h1>The get method works!</h1>\r\n" + //
-                                "    </body>\r\n" + //
-                                "</html>";
-            System.out.println(response);
-            return response;
+            rep.setHeader(rep.OKResponse());
+            rep.setBody("<!DOCTYPE html>\r\n" + //
+                        "<html>\r\n" + //
+                        "    <body>\r\n" + //
+                        "        <h1>The query from the URL is " + req.getQuery() + "</h1>\r\n" + //
+                        "    </body>\r\n" + //
+                        "</html>");
+            return rep.createAndGetResponse();
         });
 
         post("/post-test", (req, rep) -> {
-            String response = "";
             rep.setContentType("html");
-            response += rep.createdResponse();
-            response += "<!DOCTYPE html>\r\n" + //
-                                "<html>\r\n" + //
-                                "    <body>\r\n" + //
-                                "        <h1>Posted content in the server!</h1>\r\n" + //
-                                "    </body>\r\n" + //
-                                "</html>";
-            System.out.println(response);
-            return response;
+            rep.setHeader(rep.createdResponse());
+            rep.setBody("<!DOCTYPE html>\r\n" + //
+                        "<html>\r\n" + //
+                        "    <body>\r\n" + //
+                        "        <h1>Posted content in the server!</h1>\r\n" + //
+                        "    </body>\r\n" + //
+                        "</html>");
+            return rep.createAndGetResponse();
         });
         
 

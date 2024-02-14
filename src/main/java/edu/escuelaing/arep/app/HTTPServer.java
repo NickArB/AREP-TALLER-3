@@ -114,7 +114,7 @@ public class HTTPServer {
 
     private static void callService(PrintWriter outPut, URI requeUri){
         String calledServiceUri = requeUri.getPath().substring(7);
-        outPut.println(usersRequest.get(calledServiceUri).handle(calledServiceUri, serverResponse));
+        outPut.println(usersRequest.get(calledServiceUri).handle(requeUri, serverResponse));
     }
 
     /**
