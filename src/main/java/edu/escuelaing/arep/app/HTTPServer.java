@@ -17,9 +17,6 @@ import java.io.*;
 public class HTTPServer {
 
     private static HTTPResponse serverResponse = new HTTPResponse("html", null);
-    private static String serviceUri = null;
-    private static Function service = null;
-    private static boolean running = false;
     private static Map<String,Function> usersRequest = new HashMap<>();
 
     private static HTTPServer _instance = new HTTPServer();
@@ -112,13 +109,18 @@ public class HTTPServer {
         client.close();
     }
 
+    /**
+     * Calls the appropriate service based on the URI path and sends the response to the client.
+     * @param outPut The PrintWriter object to send the response to the client.
+     * @param requeUri The URI of the requested service.
+     */
     private static void callService(PrintWriter outPut, URI requeUri){
         String calledServiceUri = requeUri.getPath().substring(7);
         outPut.println(usersRequest.get(calledServiceUri).handle(requeUri, serverResponse));
     }
 
     /**
-     * Sends the HTTP response for the index page to the client.
+     * Sends the HTTP response for a resource to the client.
      * @param outPut The PrintWriter for sending the response.
      * @param client The socket used to communicate with the client
      * @param request The request from the client
