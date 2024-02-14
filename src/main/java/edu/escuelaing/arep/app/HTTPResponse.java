@@ -92,7 +92,7 @@ public class HTTPResponse {
     public void sendFile(URI requestedfile){
         try{
             OutputStream out = socketClient.getOutputStream();
-            Path imagePath = Paths.get(this.STATIC_PATH, requestedfile.getPath());
+            Path imagePath = Paths.get("web-files", requestedfile.getPath());
             byte[] imageData = Files.readAllBytes(imagePath);
             out.write(imageData);
             out.flush();
