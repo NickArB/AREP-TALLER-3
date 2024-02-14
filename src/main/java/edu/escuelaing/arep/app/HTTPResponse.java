@@ -10,9 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * The `HTTPResponse` class provides methods for generating HTML pages and JSON error messages
- * to be sent as responses in an HTTP server. It includes a method to create the index page, a method
- * for the "not found" page, and a method to return a JSON error message.
+ * The `HTTPResponse` class provides methods for generating HTTP responses, including headers and content,
+ * to be sent by an HTTP server. It includes methods to create different types of responses such as OK, Not Found,
+ * and Internal Server Error, as well as methods to set the content type and send files as responses.
  * @author Nicolas Ariza Barbosa
  */
 public class HTTPResponse {
@@ -57,6 +57,10 @@ public class HTTPResponse {
         return reponse;
     }
 
+    /**
+     * Generates the HTTP response headers for a "created" response with the specified content type.
+     * @return The HTTP response headers for a "created" response.
+     */
     public String createdResponse(){
         String response = "HTTP/1.1 201 Created\r\n"
                     + "Content-Type: text/" + this.CONTENT_TYPE +"\r\n"
@@ -123,12 +127,24 @@ public class HTTPResponse {
         this.STATIC_PATH = path;
     }
 
+    public String getStaticPath(){
+        return this.STATIC_PATH;
+    }
+
     public void setBody(String newBody){
         this.BODY = newBody;
     }
 
+    public String getBody(){
+        return this.BODY;
+    }
+
     public void setHeader(String newHeader){
         this.HEADER = newHeader;
+    }
+
+    public String getHeader(){
+        return this.HEADER;
     }
 
     public String createAndGetResponse(){
