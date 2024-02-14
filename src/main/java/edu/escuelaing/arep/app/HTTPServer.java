@@ -3,8 +3,9 @@ package edu.escuelaing.arep.app;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.io.*;
 
 /**
@@ -15,11 +16,11 @@ import java.io.*;
  */
 public class HTTPServer {
 
-    private static HTTPResponseHeaders serverResponseHeaders = new HTTPResponseHeaders("html");
-    private static HTTPResponseData serverResponseData = new HTTPResponseData();
+    private static HTTPResponse serverResponse = new HTTPResponse("html", null);
     private static String serviceUri = null;
     private static Function service = null;
     private static boolean running = false;
+    private static Map<String,Function> usersRequest = new HashMap<>();
 
     private static HTTPServer _instance = new HTTPServer();
     private HTTPServer(){}
@@ -63,12 +64,14 @@ public class HTTPServer {
      * @throws URISyntaxException 
      */
     private static void handleClientConnection(Socket client) throws IOException, URISyntaxException {
+        serverResponse.setClient(client);
         PrintWriter out = new PrintWriter(client.getOutputStream(), true);
         BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
         String inputLine;
         boolean firstLine = true;
         String query = "";
 
+        // Read the headers
         while ((inputLine = in.readLine()) != null) {
             if(firstLine){
                 query = inputLine.split(" ")[1].toLowerCase();
@@ -84,7 +87,7 @@ public class HTTPServer {
         String apiRequest = null;
 
         try {
-            // Check for API services
+            // Check for Mini framework services
             if(request.getPath().startsWith("/action/")){
                 callService(out, request);
             }else{
@@ -97,11 +100,11 @@ public class HTTPServer {
                     throw new NoSuchFileException("File: " + request.getPath() + " does not exists!");
                 }
                 //Return HTTP response
-                HTTPResponse(out, client, request);
+                HTTPResponseConstructor(out, client, request);
             }
         } catch (Exception e) {
             System.err.println(e);
-            HTTPError(out, client);
+            HTTPErrorConstructor(out, client);
         }
 
         out.close();
@@ -111,11 +114,7 @@ public class HTTPServer {
 
     private static void callService(PrintWriter outPut, URI requeUri){
         String calledServiceUri = requeUri.getPath().substring(7);
-        if(serviceUri.equals(calledServiceUri)){
-            serverResponseHeaders.setContentType("text");
-            outPut.println(serverResponseHeaders.OKResponse());
-            outPut.println(service.handle(requeUri.getQuery()));
-        }
+        outPut.println(usersRequest.get(calledServiceUri).handle(calledServiceUri, serverResponse));
     }
 
     /**
@@ -127,17 +126,17 @@ public class HTTPServer {
      * @throws IOException If an I/O error occurs.
      * @throws URISyntaxException 
      */
-    public static void HTTPResponse (PrintWriter outPut, Socket client, URI request) throws FileNotFoundException, IOException, URISyntaxException {
+    public static void HTTPResponseConstructor (PrintWriter outPut, Socket client, URI request) throws FileNotFoundException, IOException, URISyntaxException {
         // Send headers to the client
         String extension = request.toString();
         extension = extension.substring(extension.lastIndexOf(".") + 1);
         // Set content type
-        serverResponseHeaders.setContentType(extension);
-        outPut.println(serverResponseHeaders.OKResponse());
+        serverResponse.setContentType(extension);
+        outPut.println(serverResponse.OKResponse());
         // Prevents the connection to be closed by exchanging output stream
         outPut.flush();
         // Send index.html to the client
-        serverResponseData.sendFileData(request, client);
+        serverResponse.sendFile(request);
     }
 
     /**
@@ -146,30 +145,26 @@ public class HTTPServer {
      * @throws URISyntaxException
      * @throws IOException
      */
-    private static void HTTPError(PrintWriter outPut, Socket client) {
+    private static void HTTPErrorConstructor (PrintWriter outPut, Socket client) {
         // Send headers to the client
-        serverResponseHeaders.setContentType("html");
-        outPut.println(serverResponseHeaders.NotFoundResponse());
+        serverResponse.setContentType("html");
+        outPut.println(serverResponse.NotFoundResponse());
         // Prevents the connection to be closed by exchanging output stream
         outPut.flush();
         // Send HTML structure to the client
         try {
-            serverResponseData.sendNotFoundPage(client);
+            serverResponse.sendNotFoundPage();
         } catch (IOException | URISyntaxException e) {
             System.err.println(e);
         }
     }
 
     public static void get(String path, Function svc) throws IOException{
-        String[] args = {};
-        serviceUri = path;
-        service = svc;
+        usersRequest.put(path,svc);
+    }
 
-        if (!running) {
-            HTTPServer.getInstance();
-            HTTPServer.runServer(args);
-        }
-        
+    public static void post(String path, Function svc) throws IOException{
+        usersRequest.put(path, svc);
     }
 }
 
