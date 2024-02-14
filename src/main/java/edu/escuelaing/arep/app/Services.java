@@ -9,39 +9,42 @@ public class Services {
     public static void main(String[] args) throws IOException {
         
         get("/get-test", (req,rep) -> {
+            String response = "";
             rep.setContentType("html");
-            rep.setHeader(rep.OKResponse());
-            rep.setBody("<!DOCTYPE html>\r\n" + //
+            response += rep.OKResponse();
+            response += "<!DOCTYPE html>\r\n" + //
                         "<html>\r\n" + //
                         "    <body>\r\n" + //
                         "        <h1>The get method works!</h1>\r\n" + //
                         "    </body>\r\n" + //
-                        "</html>");
-            return rep.createAndGetResponse();
+                        "</html>\r\n";
+            return response;
         });
 
         get("/read-query", (req,rep) -> {
+            String response = "";
             rep.setContentType("html");
-            rep.setHeader(rep.OKResponse());
-            rep.setBody("<!DOCTYPE html>\r\n" + //
+            response += rep.OKResponse();
+            response += "<!DOCTYPE html>\r\n" + //
                         "<html>\r\n" + //
                         "    <body>\r\n" + //
                         "        <h1>The query from the URL is " + req.getQuery() + "</h1>\r\n" + //
                         "    </body>\r\n" + //
-                        "</html>");
-            return rep.createAndGetResponse();
+                        "</html>\r\n";
+            return response;
         });
 
         post("/post-test", (req, rep) -> {
+            String response = "";
             rep.setContentType("html");
-            rep.setHeader(rep.createdResponse());
-            rep.setBody("<!DOCTYPE html>\r\n" + //
+            response += rep.createdResponse();
+            response += "<!DOCTYPE html>\r\n" + //
                         "<html>\r\n" + //
                         "    <body>\r\n" + //
                         "        <h1>Posted content in the server!</h1>\r\n" + //
                         "    </body>\r\n" + //
-                        "</html>");
-            return rep.createAndGetResponse();
+                        "</html>\r\n";
+            return response;
         });
         
 

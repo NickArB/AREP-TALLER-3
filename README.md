@@ -1,15 +1,15 @@
-# FILE WEB SERVER - API REST (TALLER 2 AREP)
+# MINI SPARK FRAMEWORK (TALLER 3 AREP)
 
-Taller 2 del curso de Arquitecturas Empresariales (AREP) en el que se implementa un servidor HTTP el cual es capaz de leer y retornar archivos contenidos en el disco duro del servidor. Además, implementa una galeria interactiva de imagenes las cuales consiguen sus datos mediante un servicio API REST.
+Taller 3 del curso de Arquitecturas Empresariales (AREP) en el que se implementa un framework basado en funciones lambda el cual permite a los desarrolladores implementar servidores HTTP sencillos capaces de leer e interpretar peticiones GET y POST junto a funcionalidades de personalización para la interpretación de estos mensajes.
 
 ## Diseño
 Este proyecto funciona y esta organizado en diferentes componentes con responsabilidades unicas.
 
-1. `HTTPResponseData` es el componente encargado de leer y responder a los clientes con los datos relacionados a archivos dentro del servidor, tal como documentos HTML e imagenes.
-2. `HTTPResponseHeaders` componente encargado de generar los respectivos encabezados de respuesta HTTP para las diferentes peticiones de los clientes.
-3. `HTTPServer` componente principal del proyecto encargado de administrar el servicio HTTP y de atender las solicitudes de conexión de los clientes. Además, administra un sistema API que consume el front.
-4. `Frontend` en este proyecto se cuenta con una galeria de imagenes con las cuales el cliente puede interactuar como si fuese una pasarela. Implementa un metodo REST asincrono para llamar al servidor HTTP y obtener los recursos multimedia alojados en este.
-5. `Almacenamiento del servidor` para este proyecto se solicito exclusivamente que los datos solicitados por el cliente web y el usuario estuviesen almacenados en el disco del servidor, para ello, se tiene la carpeta `web-files` la cual contiene todos estos archivos de prueba para comprobar que se esta consultando, leyendo y enviando el contenido de este directorio alojado en el servidor.
+1. `HTTPResponse` Componente clave encargado de formar, mapear y retornar los diferentes encabezados, códigos de respuesta y contenido del cuerpo de los mensajes HTTP. Se trata de una clase auxiliar.
+2. `HTTPServer` componente principal del proyecto encargado de administrar el servicio HTTP y de atender las solicitudes de conexión de los clientes. Además, administra un sistema API que consume el front.
+3. `Function` Interfaz encargada de mapear las diferentes funciones lambda personalizables que definan los desarrolladores, se utiliza como intermediaria para que el framework procese funciones de manera universal.
+4. `Services` Componente principal en el cual el desarrollador define cuales funciones desea implementar para su servidor HTTP mediante el uso de métodos GET y POST e implementación comoda de funciones lambda que atiendan las solicitudes.
+5. `Frontend` No se cuenta con un front definido, más sin embargo existen respuestas de funcionalidad de los servicios que pueden ser personalizados por el desarrollador.
 
 ## Extensión e implementación de otros servicios
 
@@ -20,6 +20,10 @@ Aún existen algunas funcionalidades a tener en cuenta para futuras versiones de
 2. El factor de lectura y envio de datos del servidor es perfectamente funcional, la página web podría aprovechar esta ventaja para implementar aún más recursos multimedia, tal como video y demás elementos audiovisuales.
 
 3. Podría implementarse un servicio de subida de imagenes para alimentar la galeria con más datos ofreciendo más posibilidades de consumo dentro del proyecto.
+
+4. Existen aún más métodos aparte de GET y POST, el framework podría extenderse para ofrecer un mayor espectro de servicios Web con los que los desarrolladores podrían crear soluciones de una forma más comoda y eficiente.
+
+5. El servicio POST podría implementar la capacidad de archivos al servidor, funcionalidad que esta limitada a contenido en texto plano.
 
 ## Instrucciones de uso
 
@@ -37,7 +41,7 @@ A continuación se muestra el paso a paso de como instalar y ejecutar el servido
 1. Clone este repositorio localmente en un entorno o carpeta de trabajo.
 
 ```
-$ git clone https://github.com/NickArB/AREP-TALLER-2.git
+$ git clone https://github.com/NickArB/AREP-TALLER-3.git
 ```
 
 2. Dentro del entorno o directorio en el que clono el proyecto, asegurese de que no existan ejecutables previos o no deseados con maven.
@@ -49,20 +53,54 @@ $ mvn clean
 ```
 $ mvn package
 ```
-4. Con los target asignados, ejecute el metodo main de la clase HTTPServer. Dependiendo de su IDE esta clase se puede ejecutar de varias formas, en caso de no tener un IDE se recomienda el uso del siguiente comando
+4. Con los target asignados, ejecute el metodo main de la clase `Services.java`. Dependiendo de su IDE esta clase se puede ejecutar de varias formas, en caso de no tener un IDE se recomienda el uso del siguiente comando
 ```
-$ java '-XX:+ShowCodeDetailsInExceptionMessages' -cp '<Path-al-directorio-de-trabajo>\target\classes' 'edu.escuelaing.arep.app.HTTPServer'
+$ java '-XX:+ShowCodeDetailsInExceptionMessages' -cp '<Path-al-directorio-de-trabajo>\target\classes' 'edu.escuelaing.arep.app.Services'
 ```
 5. Una vez el servicio esta corriendo puede verificar que esta funcionando al escribir la ruta en el navegador
 ```
-http://localhost:35000/index.html
+http://localhost:35000/action/get-test
 ```
-A continuación se muestra la interfaz de usuario en el browser junto a un boton con el cual se cambia de imagen a imagen hasta completar la galeria.
+A continuación se dan unas URL de muestra que ya se encuentran implementadas dentro de la clase Service.java.
 
+### Pruebas en Windows como Host
+```
+En esta muestra se prueba que el método GET funciona
+```
 ![Sample Image 1](images/sample1.png)
+```
+En esta muestra se prueba que el framework es capaz de leer queries de la URL.
+```
 ![Sample Image 2](images/sample2.png)
+```
+En esta muestra se prueba que el framework soporta operaciones POST.
+```
 ![Sample Image 3](images/sample3.png)
 
+### Pruebas en Linux como cliente
+
+Para el caso en Linux es necesario conocer cuál es la IP asignada en el Host, esta información se puede obtener mediante el siguiente comando en PowerShell:
+
+```
+$ ipconfig /all
+```
+A continuación se usa la IP obtenida y en el navegador de preferencia en su máquina Linux, escriba la siguiente ruta para probar el servicio:
+```
+http://<Dirección-IP-de-la-máquina-Host>:35000/action/get-test
+```
+Si todo sale bien debería ser capaz de visualizar las siguientes pruebas
+```
+En esta muestra se prueba que el método GET funciona
+```
+![Sample Image 1](images/sample4.png)
+```
+En esta muestra se prueba que el framework es capaz de leer queries de la URL.
+```
+![Sample Image 2](images/sample5.png)
+```
+En esta muestra se prueba que el framework soporta operaciones POST.
+```
+![Sample Image 3](images/sample6.png)
 
 ## Ejecutando pruebas unitarias
 
