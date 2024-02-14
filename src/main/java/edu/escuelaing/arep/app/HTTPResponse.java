@@ -21,6 +21,9 @@ public class HTTPResponse {
     private String[] mediaFilesLst = {"jpeg", "png", "ico"};
     private Socket socketClient = null;
     private String STATIC_PATH = "web-files";
+    private String RESPONSE = "";
+    private String HEADER = "";
+    private String BODY = "";
 
     /**
      * Constructs an `HTTPResponse` object with the specified content type.
@@ -118,6 +121,20 @@ public class HTTPResponse {
 
     public void setStaticPath(String path){
         this.STATIC_PATH = path;
+    }
+
+    public void setBody(String newBody){
+        this.BODY = newBody;
+    }
+
+    public void setHeader(String newHeader){
+        this.HEADER = newHeader;
+    }
+
+    public String createAndGetResponse(){
+        RESPONSE += HEADER;
+        RESPONSE += BODY;
+        return RESPONSE;
     }
 
     
